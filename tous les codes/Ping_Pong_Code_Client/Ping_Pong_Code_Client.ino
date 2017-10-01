@@ -26,7 +26,7 @@ void setup() {
 }
  
 void loop() {
-  unsigned long time_message = micros(); // On garde le temps actuel retourné par millis()
+  unsigned long time_message = millis(); // On garde le temps actuel retourné par millis()
    
   Serial.print("Ping ... ");
   Mirf.send((byte *) &time_message); // On envoie le temps actuel en utilisant une astuce pour transformer le long en octets
@@ -34,7 +34,7 @@ void loop() {
    
   // Attente de la réponse
   while(!Mirf.dataReady()) { // On attend de recevoir quelque chose
-    if (micros() - time_message > 10000 ) { // Si on attend depuis plus d'une seconde
+    if (millis() - time_message > 1000 ) { // Si on attend depuis plus d'une seconde
       Serial.println("Pas de pong"); // C'est le drame ...
       return;
     }
@@ -45,8 +45,8 @@ void loop() {
   
   // On affiche le temps de latence (sans division par deux)
   Serial.print("Pong: ");
-  Serial.print(micros() - time_message); 
-  Serial.println("microsec");
+  Serial.print(millis() - time_message); 
+  Serial.println("millisec");
   
   // Pas besoin de tester plus d'une fois par seconde
   delay(1000);
