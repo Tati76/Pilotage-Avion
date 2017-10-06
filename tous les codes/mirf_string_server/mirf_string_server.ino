@@ -6,7 +6,7 @@
 #include <nRF24L01.h> // Pour les définitions des registres du nRF24L01
 #include <MirfHardwareSpiDriver.h> // Pour la communication SPI
 
-#define TAILLE 12
+#define TAILLE 4
  
 long temps;
 long compteur(0);
@@ -38,8 +38,10 @@ void loop() {
     Mirf.getData(message); // Réception du paquet
     //Serial.println((char*) message); // Affiche le message
     //Serial.println("Got Message"); 
+    
     compteur += 1;
   }
+  
 
   if((millis() - temps) > 1000)
         {

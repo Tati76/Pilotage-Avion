@@ -6,7 +6,7 @@
 #include <nRF24L01.h> // Pour les définitions des registres du nRF24L01
 #include <MirfHardwareSpiDriver.h> // Pour la communication SPI
 
-#define TAILLE 12
+#define TAILLE 10
 
 void setup() {
   Serial.begin(9600);
@@ -31,7 +31,7 @@ void loop() {
   compteur = compteur + 1;
   byte message[TAILLE];
   String mot("");
-  mot = (String) compteur;
+  mot = "1010101010";//(String) compteur;
   for (int i(0) ; i<mot.length() ; i++)
   {
       message[i] = (byte) mot[i];
@@ -47,5 +47,9 @@ void loop() {
   message[len] = '\0'; // Ferme la chaine de caractères
   
   Mirf.send(message); // On envoi le message
-  while(Mirf.isSending()); // On attend la fin de l
+  while(Mirf.isSending())
+  {
+    // On attend la fin de l
+    Serial.println("Coincé");
+  }
 }

@@ -1,0 +1,9 @@
+NRF24L01+ avec leur support adaptateur de tension: 
+VCC --> 5V
+GND --> GND
+CE --> D7
+CSN --> D8
+SCK --> D13
+MOSI (MO) --> D11
+MISO (MI) --> D12
+IRQ --> Non connecté
