@@ -16,7 +16,7 @@
 #define ANGLE_MAX_ROULIS 50 // angle vertical joystick
 #define ANGLE_MIN_ROULIS -50 // angle vertical joystick
 #define ACC_MAX_MOTEUR 2000
-#define ACC_MIN_MOTEUR 1000
+#define ACC_MIN_MOTEUR 1050
 #define ANGLE_MAX_TRAIN_ATTERISSAGE 180
 #define ANGLE_MIN_TRAIN_ATTERISSAGE 0
 
