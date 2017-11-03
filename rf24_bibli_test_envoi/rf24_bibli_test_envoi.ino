@@ -30,12 +30,16 @@ const byte pinLed1 = 10;
 USB Usb;
 PS4USB PS4(&Usb);
 
+uint8_t ancienEtatL3;
+bool trainAtterissage;
+
 typedef struct{
   uint8_t Acc;
   uint8_t LUn;
   uint8_t RUn;
   uint8_t XRoulis;
   uint8_t YRoulis;
+  bool trainAtterissage;
 } Donnees;
 
 
@@ -49,7 +53,7 @@ void envoyerMessage(Donnees nombre)
   radio.stopListening();   // On arrête d'écouter pour qu'on puisse émettre
 
   if (!radio.write( &nombre, sizeof(Donnees) )) {
-    Serial.println(F("erreur d'envoi"));
+    //Serial.println(F("erreur d'envoi"));
   }
   radio.startListening(); // On se remet en mode écoute
 }
@@ -110,8 +114,9 @@ void setup() {
   Serial.println(F("\r\nPS4 USB Library Started"));
 
 
-
-  
+	// VARIABLES pour le programme 
+	ancienEtatL3 = 0;
+	trainAtterissage = true;
 }
 
 // ------------------------------------------------------------------
@@ -121,9 +126,11 @@ void setup() {
 uint8_t valeurAccelerateurs;
 uint8_t L1Press;
 uint8_t R1Press;
+uint8_t L3Press;
 uint8_t angleTangage;
 uint8_t angleRoulis;
 long compteur(0);
+
 Donnees msg;
 
 
@@ -134,58 +141,46 @@ void loop() {
   Usb.Task();
   
   if (PS4.connected()) {
-  
-    // ACCELERATEUR
-    /*valeurAccelerateurs = PS4.getAnalogButton(R2) ;
-    msg[0] = valeurAccelerateurs;
-    L1Press = PS4.getButtonPress(L1);
-    msg[1] = L1Press;
-    R1Press = PS4.getButtonPress(R1);
-    msg[2] = R1Press;
-    angleTangage = PS4.getAnalogHat(LeftHatY);
-    msg[3] = angleTangage;
-    angleRoulis = PS4.getAnalogHat(LeftHatX);
-    msg[4] = angleRoulis;
-    Serial.print("[");
-    Serial.print(msg[0]);
-    Serial.print(";");
-    Serial.print(msg[1]);
-    Serial.print(";");
-    Serial.print(msg[2]);
-    Serial.print(";");
-    Serial.print(msg[3]);
-    Serial.print(";");
-    Serial.print(msg[4]);
-    Serial.println("]");*/
+	
+	
+	// REGARDER SI LE TRAIN D'ATTERRISSAGE DOIT RESTER SORTI OU RENTRER
+	if ( PS4.getButtonClick(L3))
+	{
+		trainAtterissage = !trainAtterissage;
+	}
     
-    valeurAccelerateurs = PS4.getAnalogButton(R2) ;
-    msg.Acc = valeurAccelerateurs;
-    L1Press = PS4.getButtonPress(L1);
-    msg.LUn = L1Press;
-    R1Press = PS4.getButtonPress(R1);
-    msg.RUn = R1Press;
-    angleTangage = PS4.getAnalogHat(LeftHatY);
-    msg.YRoulis = angleTangage;
-    angleRoulis = PS4.getAnalogHat(LeftHatX);
-    msg.XRoulis = angleRoulis;
+	// ACCELERATEUR
+    msg.Acc = PS4.getAnalogButton(R2);
+	
+	// ANGLE LACET
+    msg.LUn = PS4.getButtonPress(L1);
+    msg.RUn = PS4.getButtonPress(R1);
+	
+	// ANGLE ROULIS
+    msg.YRoulis = PS4.getAnalogHat(LeftHatY);
+	
+	// ANGLE TANGAGE
+    msg.XRoulis = PS4.getAnalogHat(LeftHatX);
+	
+	// SORTIE DU TRAIN D'ATTERRISSAGE
+	msg.trainAtterissage = trainAtterissage;
+	
+    // ENVOI DU MESSAGE PAR LE MODULE NRF24L01+
+    envoyerMessage(msg);
     
     /*Serial.print("[");
     Serial.print(msg.Acc);
-    Serial.print(";");
+    Serial.print(",");
     Serial.print(msg.LUn);
-    Serial.print(";");
+    Serial.print(",");
     Serial.print(msg.RUn);
-    Serial.print(";");
-    Serial.print(msg.YRoulis);
-    Serial.print(";");
+    Serial.print(",");
     Serial.print(msg.XRoulis);
+    Serial.print(",");
+    Serial.print(msg.YRoulis);
+    Serial.print(",");
+    Serial.print(msg.trainAtterissage);
     Serial.println("]");*/
-    envoyerMessage(msg);
-
-    //compteur++;
-    //Serial.println(valeurAccelerateurs);
-    //delay(100);
-    //Serial.println(valeurAccelerateurs);
 
   }
   
